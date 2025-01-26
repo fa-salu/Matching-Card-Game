@@ -50,7 +50,6 @@ export default function MemoryGame() {
 
   const playCardFlipSound = () => {
     if (soundEnabled) {
-      // Only play the sound if enabled
       const audio = new Audio("/sounds/card-flip.wav");
       audio.volume = 0.5;
       audio.play();
@@ -116,9 +115,28 @@ export default function MemoryGame() {
         </>
       )}
 
-      <div className="absolute top-9 sm:top-5 left-1/2 transform -translate-x-1/2 text-white text-base sm:text-xl font-bold">
+      <div className="absolute top-9 sm:top-5 left-1/2 transform -translate-x-1/2 text-white text-lg sm:text-xl font-bold">
         <span>Matched Cards: {solved.length / 2} / 8</span>
       </div>
+
+      <button
+        className="absolute top-16 right-3 transform -translate-x-1/2  py-2  rounded-md shadow-md transition-colors"
+        onClick={() => setSoundEnabled((prev) => !prev)}
+      >
+        {soundEnabled ? (
+          <span
+            role="img"
+            aria-label="sound-off"
+            className="text-white text-xl"
+          >
+            🔊
+          </span>
+        ) : (
+          <span role="img" aria-label="sound-on" className="text-white text-xl">
+            🔇
+          </span>
+        )}
+      </button>
 
       <button
         className="absolute top-5 right-5 p-2  rounded-full shadow-md hover:scale-110 z-20"
@@ -168,25 +186,6 @@ export default function MemoryGame() {
           width={32}
           height={32}
         />
-      </button>
-
-      <button
-        className="absolute bottom-5 right-4 transform -translate-x-1/2  py-2  rounded-md shadow-md transition-colors"
-        onClick={() => setSoundEnabled((prev) => !prev)}
-      >
-        {soundEnabled ? (
-          <span
-            role="img"
-            aria-label="sound-off"
-            className="text-white text-xl"
-          >
-            🔊
-          </span>
-        ) : (
-          <span role="img" aria-label="sound-on" className="text-white text-xl">
-            🔇
-          </span>
-        )}
       </button>
     </div>
   );
