@@ -11,11 +11,13 @@ import tiger from "../../../public/images/tiger.jpg";
 import whiteTiger from "../../../public/images/white-tiger.jpg";
 import Image, { StaticImageData } from "next/image";
 import { useRouter } from "next/navigation";
+import ReactConfetti from "react-confetti";
 
 export default function MemoryGame() {
   const [cards, setCards] = useState<StaticImageData[]>([]);
   const [flipped, setFlipped] = useState<number[]>([]);
   const [solved, setSolved] = useState<number[]>([]);
+  const [soundEnabled, setSoundEnabled] = useState<boolean>(true);
 
   const initializeGame = () => {
     const memoryImages = [
@@ -36,6 +38,15 @@ export default function MemoryGame() {
     setCards(shuffledCards);
     setFlipped([]);
     setSolved([]);
+  };
+
+  const playCardFlipSound = () => {
+    if (soundEnabled) {
+      // Only play the sound if enabled
+      const audio = new Audio("/sounds/card-flip.wav");
+      audio.volume = 0.5;
+      audio.play();
+    }
   };
 
   useEffect(() => {
@@ -60,6 +71,7 @@ export default function MemoryGame() {
 
   const handleClick = (index: number) => {
     if (!flipped.includes(index) && flipped.length < 2) {
+      playCardFlipSound();
       setFlipped([...flipped, index]);
     }
   };
@@ -75,9 +87,17 @@ export default function MemoryGame() {
   return (
     <div className="flex flex-col justify-center items-center h-screen relative">
       {winMatch && (
-        <div className="absolute inset-0 flex justify-center items-center bg-black bg-opacity-50 z-10">
-          <h1 className="text-6xl font-bold text-white">You Win</h1>
-        </div>
+        <>
+          <ReactConfetti
+            width={window.innerWidth}
+            height={window.innerHeight}
+            numberOfPieces={400}
+          />
+
+          <div className="absolute inset-0 flex justify-center items-center bg-black bg-opacity-50 z-10">
+            <h1 className="text-6xl font-bold text-white">You Win</h1>
+          </div>
+        </>
       )}
 
       <div className="absolute top-9 sm:top-5 left-1/2 transform -translate-x-1/2 text-white text-base sm:text-xl font-bold">
@@ -85,7 +105,7 @@ export default function MemoryGame() {
       </div>
 
       <button
-        className="absolute top-5 right-5 p-2  rounded-full shadow-md hover:scale-110"
+        className="absolute top-5 right-5 p-2  rounded-full shadow-md hover:scale-110 z-20"
         onClick={goHome}
       >
         <Image
@@ -132,6 +152,25 @@ export default function MemoryGame() {
           width={32}
           height={32}
         />
+      </button>
+
+      <button
+        className="absolute bottom-5 right-4 transform -translate-x-1/2  py-2  rounded-md shadow-md transition-colors"
+        onClick={() => setSoundEnabled((prev) => !prev)}
+      >
+        {soundEnabled ? (
+          <span
+            role="img"
+            aria-label="sound-off"
+            className="text-white text-xl"
+          >
+            🔊
+          </span>
+        ) : (
+          <span role="img" aria-label="sound-on" className="text-white text-xl">
+            🔇
+          </span>
+        )}
       </button>
     </div>
   );
