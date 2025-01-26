@@ -19,6 +19,14 @@ export default function MemoryGame() {
   const [solved, setSolved] = useState<number[]>([]);
   const [soundEnabled, setSoundEnabled] = useState<boolean>(true);
 
+  const [windowWidth, setWindowWidth] = useState<number>(0);
+  const [windowHeight, setWindowHeight] = useState<number>(0);
+
+  useEffect(() => {
+    setWindowWidth(window.innerWidth);
+    setWindowHeight(window.innerHeight);
+  }, []);
+
   const initializeGame = () => {
     const memoryImages = [
       cat,
@@ -88,11 +96,19 @@ export default function MemoryGame() {
     <div className="flex flex-col justify-center items-center h-screen relative">
       {winMatch && (
         <>
-          <ReactConfetti
-            width={window.innerWidth}
-            height={window.innerHeight}
-            numberOfPieces={400}
-          />
+          {windowWidth > 0 && windowHeight > 0 && (
+            <ReactConfetti
+              style={{
+                position: "fixed",
+                top: 0,
+                left: 0,
+                width: "100vw",
+                height: "100vh",
+                zIndex: 10,
+              }}
+              numberOfPieces={400}
+            />
+          )}
 
           <div className="absolute inset-0 flex justify-center items-center bg-black bg-opacity-50 z-10">
             <h1 className="text-6xl font-bold text-white">You Win</h1>
