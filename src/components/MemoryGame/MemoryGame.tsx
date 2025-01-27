@@ -12,12 +12,15 @@ import whiteTiger from "../../../public/images/white-tiger.jpg";
 import Image, { StaticImageData } from "next/image";
 import { useRouter } from "next/navigation";
 import ReactConfetti from "react-confetti";
+import LevelSelector from "./levelSelect";
 
 export default function MemoryGame() {
   const [cards, setCards] = useState<StaticImageData[]>([]);
   const [flipped, setFlipped] = useState<number[]>([]);
   const [solved, setSolved] = useState<number[]>([]);
   const [soundEnabled, setSoundEnabled] = useState<boolean>(true);
+  const [click, setClick] = useState<number>(0);
+  const [maxMoves, setMaxMoves] = useState<number>(60);
 
   const [windowWidth, setWindowWidth] = useState<number>(0);
   const [windowHeight, setWindowHeight] = useState<number>(0);
@@ -46,6 +49,7 @@ export default function MemoryGame() {
     setCards(shuffledCards);
     setFlipped([]);
     setSolved([]);
+    setClick(0);
   };
 
   const playCardFlipSound = () => {
@@ -77,13 +81,15 @@ export default function MemoryGame() {
   }, [cards, flipped, solved]);
 
   const handleClick = (index: number) => {
-    if (!flipped.includes(index) && flipped.length < 2) {
+    if (!flipped.includes(index) && flipped.length < 2 && click < maxMoves) {
+      setClick(click + 1);
       playCardFlipSound();
       setFlipped([...flipped, index]);
     }
   };
 
   const winMatch = solved.length === cards.length;
+  const gameOver = click >= maxMoves && !winMatch;
 
   const router = useRouter();
 
@@ -115,7 +121,19 @@ export default function MemoryGame() {
         </>
       )}
 
-      <div className="absolute top-9 sm:top-5 left-1/2 transform -translate-x-1/2 text-white text-lg sm:text-xl font-bold">
+      {gameOver && (
+        <div className="absolute inset-0 flex justify-center items-center bg-black bg-opacity-50 z-10">
+          <h1 className="text-6xl font-bold text-white">Game Over</h1>
+        </div>
+      )}
+
+      <LevelSelector
+        click={click}
+        setMaxMoves={setMaxMoves}
+        initializeGame={initializeGame}
+      />
+
+      <div className="absolute top-20  sm:top-5 left-1/2 transform -translate-x-1/2 text-white text-lg sm:text-xl font-bold">
         <span>Matched Cards: {solved.length / 2} / 8</span>
       </div>
 
@@ -150,7 +168,7 @@ export default function MemoryGame() {
         />
       </button>
 
-      <div className="grid grid-cols-4 gap-1 sm:gap-5 mt-20">
+      <div className="grid grid-cols-4 gap-1 sm:gap-5 mt-24">
         {cards.map((card, index) => (
           <div
             key={index}
