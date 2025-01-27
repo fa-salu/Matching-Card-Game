@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import cat from "../../../public/images/cat.jpg";
 import dog from "../../../public/images/dog.jpg";
 import elephant from "../../../public/images/elephant.jpg";
@@ -90,6 +90,23 @@ export default function MemoryGame() {
 
   const winMatch = solved.length === cards.length;
   const gameOver = click >= maxMoves && !winMatch;
+
+  const playCelebrationSound = () => {
+    if (soundEnabled) {
+      const audio = new Audio("/sounds/celebration.wav");
+      audio.volume = 0.5;
+      audio.play();
+    }
+  };
+
+  const prevWinMatch = useRef(winMatch);
+
+  useEffect(() => {
+    if (!prevWinMatch.current && winMatch) {
+      playCelebrationSound();
+    }
+    prevWinMatch.current = winMatch;
+  }, [winMatch]);
 
   const router = useRouter();
 
