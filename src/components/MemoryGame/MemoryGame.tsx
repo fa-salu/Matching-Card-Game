@@ -133,7 +133,7 @@ export default function MemoryGame() {
         initializeGame={initializeGame}
       />
 
-      <div className="absolute top-20  sm:top-5 left-1/2 transform -translate-x-1/2 text-white text-lg sm:text-xl font-bold">
+      <div className="absolute top-20 left-1/2 transform -translate-x-1/2 text-white text-lg sm:text-xl font-bold">
         <span>Matched Cards: {solved.length / 2} / 8</span>
       </div>
 
